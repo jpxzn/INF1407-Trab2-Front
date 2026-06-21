@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        rel="stylesheet"
+        href="./css/alterar-senha.css"
+    >
+
+    <title>Alterar senha | GymControl</title>
+</head>
+
+<body>
+    <iframe
+        src="./links.html"
+        class="header-frame"
+        title="Cabeçalho"
+    ></iframe>
+
+    <main class="page-container">
+        <section class="password-card">
+            <h1>Alterar senha</h1>
+
+            <p class="description">
+                Informe sua senha atual e escolha uma nova senha.
+            </p>
+
+            <form id="change-password-form">
+                <div class="form-group">
+                    <label for="current-password">
+                        Senha atual
+                    </label>
+
+                    <input
+                        type="password"
+                        id="current-password"
+                        name="current-password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="new-password">
+                        Nova senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="new-password"
+                        name="new-password"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="new-password-confirmation">
+                        Confirmar nova senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="new-password-confirmation"
+                        name="new-password-confirmation"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+                </div>
+
+                <p
+                    class="form-message hidden"
+                    id="form-message"
+                ></p>
+
+                <button
+                    type="submit"
+                    class="submit-button"
+                    id="submit-button"
+                >
+                    Alterar senha
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <script
+        type="module"
+        src="./javascript/alterar-senha.js"
+    ></script>
+</body>
+</html>

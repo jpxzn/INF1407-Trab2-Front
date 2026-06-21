@@ -105,3 +105,44 @@ body {
 .hidden {
     display: none;
 }
+
+/* BOTÃO DO USUÁRIO */
+
+.user-menu-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 7px 10px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+
+    font-family: inherit;
+    cursor: pointer;
+
+    transition: background 0.2s ease;
+}
+
+.user-menu-button:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.user-menu-button:focus-visible {
+    outline: 2px solid #93c5fd;
+    outline-offset: 2px;
+}
+
+.user-menu-arrow {
+    color: #ffffff;
+    font-size: 10px;
+
+    transition: transform 0.2s ease;
+}
+
+.user-menu-button[aria-expanded="true"]
+.user-menu-arrow {
+    transform: rotate(180deg);
+}

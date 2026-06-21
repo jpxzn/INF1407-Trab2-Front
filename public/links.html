@@ -36,13 +36,25 @@
         </div>
 
         <div class="nav-right hidden" id="logged">
-            <span class="user" id="user-name">
-                Olá, usuário
-            </span>
+            <button
+                type="button"
+                class="user-menu-button"
+                id="user-menu-button"
+                aria-expanded="false"
+                aria-haspopup="true"
+            >
+                <span class="user" id="user-name">
+                    Olá, usuário
+                </span>
 
-            <a href="#" class="logout-btn" id="logout">
-                Sair
-            </a>
+                <span
+                    class="user-menu-arrow"
+                    id="user-menu-arrow"
+                    aria-hidden="true"
+                >
+                    ▼
+                </span>
+            </button>
         </div>
     </nav>
 
