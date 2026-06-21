@@ -1,1 +1,1 @@
-export const backendAddress = "https://inf1407-trab2-back.vercel.app/";
+export const backendAddress = "https://inf-1407-trab2-back.vercel.app/";
