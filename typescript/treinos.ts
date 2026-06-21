@@ -57,6 +57,9 @@ const contentList = getElement<HTMLElement>(
 const backLink = getElement<HTMLAnchorElement>(
     "back-link"
 );
+const adminTopActions = getElement<HTMLDivElement>(
+    "admin-top-actions"
+);
 
 function removeTokens(): void {
     localStorage.removeItem("access_token");
@@ -129,13 +132,23 @@ function createAlunoCard(aluno: Aluno): HTMLElement {
     return article;
 }
 
-function createTreinoCard(treino: Treino): HTMLElement {
+function createTreinoCard(
+    treino: Treino,
+    alunoId?: number,
+    isAdmin: boolean = false
+): HTMLElement {
     const article = document.createElement("article");
     article.classList.add("treino-card");
 
     const link = document.createElement("a");
     link.classList.add("card-link");
-    link.href = `./treino.html?id=${treino.id}`;
+
+    const alunoParameter = alunoId
+        ? `&aluno=${alunoId}`
+        : "";
+
+    link.href =
+        `./treino.html?id=${treino.id}${alunoParameter}`;
 
     const title = document.createElement("h2");
     title.classList.add("card-title");
@@ -152,6 +165,30 @@ function createTreinoCard(treino: Treino): HTMLElement {
     );
 
     article.appendChild(link);
+
+    if (isAdmin) {
+        const actions = document.createElement("div");
+        actions.classList.add("treino-actions");
+
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.classList.add("edit-link");
+        editButton.textContent = "Editar";
+        editButton.dataset.treinoId = String(treino.id);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.classList.add("delete-button");
+        deleteButton.textContent = "Excluir";
+        deleteButton.dataset.treinoId = String(treino.id);
+
+        actions.append(
+            editButton,
+            deleteButton
+        );
+
+        article.appendChild(actions);
+    }
 
     return article;
 }
@@ -180,7 +217,9 @@ function showAlunos(alunos: Aluno[]): void {
 
 function showTreinos(
     treinos: Treino[],
-    emptyText: string
+    emptyText: string,
+    alunoId?: number,
+    isAdmin: boolean = false
 ): void {
     contentList.replaceChildren();
 
@@ -197,7 +236,11 @@ function showTreinos(
 
     for (const treino of treinos) {
         contentList.appendChild(
-            createTreinoCard(treino)
+            createTreinoCard(
+                treino,
+                alunoId,
+                isAdmin
+            )
         );
     }
 }
@@ -289,10 +332,14 @@ async function loadAdminStudentTreinos(
 
     pageSubtitle.textContent =
         "Visualize os treinos cadastrados para este aluno.";
+    
+    showCreateTreinoButton(alunoId);
 
     showTreinos(
         treinosDoAluno,
-        `${aluno.username} ainda não possui treinos cadastrados.`
+        `${aluno.username} ainda não possui treinos cadastrados.`,
+        alunoId,
+        true
     );
 }
 
@@ -362,6 +409,22 @@ async function initializePage(): Promise<void> {
     } finally {
         loadingMessage.classList.add("hidden");
     }
+}
+
+function showCreateTreinoButton(
+    alunoId: number
+): void {
+    adminTopActions.replaceChildren();
+
+    const createButton = document.createElement("button");
+
+    createButton.type = "button";
+    createButton.classList.add("main-link-button");
+    createButton.textContent = "Criar treino";
+    createButton.dataset.alunoId = String(alunoId);
+
+    adminTopActions.appendChild(createButton);
+    adminTopActions.classList.remove("hidden");
 }
 
 void initializePage();

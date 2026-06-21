@@ -12,6 +12,7 @@ const loadingMessage = getElement("loading-message");
 const pageError = getElement("page-error");
 const contentList = getElement("content-list");
 const backLink = getElement("back-link");
+const adminTopActions = getElement("admin-top-actions");
 function removeTokens() {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
@@ -56,12 +57,16 @@ function createAlunoCard(aluno) {
     article.appendChild(link);
     return article;
 }
-function createTreinoCard(treino) {
+function createTreinoCard(treino, alunoId, isAdmin = false) {
     const article = document.createElement("article");
     article.classList.add("treino-card");
     const link = document.createElement("a");
     link.classList.add("card-link");
-    link.href = `./treino.html?id=${treino.id}`;
+    const alunoParameter = alunoId
+        ? `&aluno=${alunoId}`
+        : "";
+    link.href =
+        `./treino.html?id=${treino.id}${alunoParameter}`;
     const title = document.createElement("h2");
     title.classList.add("card-title");
     title.textContent = treino.nome;
@@ -71,6 +76,22 @@ function createTreinoCard(treino) {
         "Visualize os exercícios, séries e repetições deste treino.";
     link.append(title, description);
     article.appendChild(link);
+    if (isAdmin) {
+        const actions = document.createElement("div");
+        actions.classList.add("treino-actions");
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.classList.add("edit-link");
+        editButton.textContent = "Editar";
+        editButton.dataset.treinoId = String(treino.id);
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.classList.add("delete-button");
+        deleteButton.textContent = "Excluir";
+        deleteButton.dataset.treinoId = String(treino.id);
+        actions.append(editButton, deleteButton);
+        article.appendChild(actions);
+    }
     return article;
 }
 function showAlunos(alunos) {
@@ -87,7 +108,7 @@ function showAlunos(alunos) {
         contentList.appendChild(createAlunoCard(aluno));
     }
 }
-function showTreinos(treinos, emptyText) {
+function showTreinos(treinos, emptyText, alunoId, isAdmin = false) {
     contentList.replaceChildren();
     if (treinos.length === 0) {
         const emptyMessage = document.createElement("p");
@@ -97,7 +118,7 @@ function showTreinos(treinos, emptyText) {
         return;
     }
     for (const treino of treinos) {
-        contentList.appendChild(createTreinoCard(treino));
+        contentList.appendChild(createTreinoCard(treino, alunoId, isAdmin));
     }
 }
 async function loadStudentView(accessToken) {
@@ -141,7 +162,8 @@ async function loadAdminStudentTreinos(accessToken, alunoId) {
         `Treinos de ${aluno.username}`;
     pageSubtitle.textContent =
         "Visualize os treinos cadastrados para este aluno.";
-    showTreinos(treinosDoAluno, `${aluno.username} ainda não possui treinos cadastrados.`);
+    showCreateTreinoButton(alunoId);
+    showTreinos(treinosDoAluno, `${aluno.username} ainda não possui treinos cadastrados.`, alunoId, true);
 }
 async function initializePage() {
     const accessToken = localStorage.getItem("access_token");
@@ -182,5 +204,15 @@ async function initializePage() {
     finally {
         loadingMessage.classList.add("hidden");
     }
+}
+function showCreateTreinoButton(alunoId) {
+    adminTopActions.replaceChildren();
+    const createButton = document.createElement("button");
+    createButton.type = "button";
+    createButton.classList.add("main-link-button");
+    createButton.textContent = "Criar treino";
+    createButton.dataset.alunoId = String(alunoId);
+    adminTopActions.appendChild(createButton);
+    adminTopActions.classList.remove("hidden");
 }
 void initializePage();

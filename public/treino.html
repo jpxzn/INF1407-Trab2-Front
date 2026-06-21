@@ -8,13 +8,13 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Treinos | GymControl</title>
+    <title>Detalhes do treino | GymControl</title>
 
     <link rel="stylesheet" href="./css/treinos.css">
 
     <script
         type="module"
-        src="./javascript/treinos.js">
+        src="./javascript/treino.js">
     </script>
 </head>
 
@@ -31,18 +31,18 @@
     <main class="page-container">
         <a
             id="back-link"
-            class="back-link hidden"
+            class="back-link"
             href="./treinos.html">
-            ← Voltar para alunos
+            ← Voltar para treinos
         </a>
 
         <header class="page-header">
-            <h1 id="page-title" class="page-title">
-                Treinos
+            <h1 id="treino-name" class="page-title">
+                Treino
             </h1>
 
-            <p id="page-subtitle" class="page-subtitle">
-                Carregando informações...
+            <p class="page-subtitle">
+                Consulte os exercícios, séries e repetições.
             </p>
         </header>
 
@@ -52,7 +52,7 @@
         </div>
 
         <p id="loading-message" class="page-subtitle">
-            Carregando...
+            Carregando treino...
         </p>
 
         <p
@@ -62,7 +62,7 @@
         </p>
 
         <section
-            id="content-list"
+            id="exercicios-list"
             class="treinos-list">
         </section>
     </main>
