@@ -124,16 +124,105 @@ function createMetaBox(
     return box;
 }
 
+async function deleteTreinoExercicio(
+    relacao: TreinoExercicio,
+    treinoId: number,
+    removeButton: HTMLButtonElement
+): Promise<void> {
+    const confirmed = window.confirm(
+        (
+            `Tem certeza de que deseja remover ` +
+            `"${relacao.exercicio_nome}" deste treino?`
+        )
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    const accessToken = localStorage.getItem(
+        "access_token"
+    );
+
+    if (!accessToken) {
+        redirectToLogin();
+        return;
+    }
+
+    pageError.textContent = "";
+
+    removeButton.disabled = true;
+    removeButton.textContent = "Removendo...";
+
+    try {
+        const response = await fetch(
+            (
+                `${backendAddress}api/treinos/${treinoId}/` +
+                `exercicios/${relacao.id}/`
+            ),
+            {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }
+        );
+
+        if (response.status === 401) {
+            removeTokens();
+            redirectToLogin();
+            return;
+        }
+
+        if (response.status === 403) {
+            pageError.textContent =
+                "Você não possui permissão para remover exercícios.";
+
+            return;
+        }
+
+        if (response.status === 404) {
+            pageError.textContent =
+                "Exercício do treino não encontrado.";
+
+            return;
+        }
+
+        if (!response.ok) {
+            pageError.textContent =
+                "Não foi possível remover o exercício.";
+
+            return;
+        }
+
+        window.location.reload();
+    } catch (error: unknown) {
+        console.error(
+            "Erro ao remover exercício do treino:",
+            error
+        );
+
+        pageError.textContent =
+            "Não foi possível conectar ao servidor.";
+    } finally {
+        removeButton.disabled = false;
+        removeButton.textContent = "Remover";
+    }
+}
+
 function createExerciseCard(
     treinoExercicio: TreinoExercicio,
-    isAdmin: boolean
+    isAdmin: boolean,
+    treinoId: number,
+    alunoParameter: string | null
 ): HTMLElement {
     const article = document.createElement("article");
     article.classList.add("treino-card");
 
     const title = document.createElement("h2");
     title.classList.add("card-title");
-    title.textContent = treinoExercicio.exercicio_nome;
+    title.textContent =
+        treinoExercicio.exercicio_nome;
 
     const meta = document.createElement("div");
     meta.classList.add("exercise-meta");
@@ -162,22 +251,42 @@ function createExerciseCard(
         const actions = document.createElement("div");
         actions.classList.add("treino-actions");
 
-        const editButton = document.createElement("button");
-        editButton.type = "button";
-        editButton.classList.add("edit-link");
-        editButton.textContent = "Editar";
-        editButton.dataset.relacaoId =
-            String(treinoExercicio.id);
+        const alunoSuffix = alunoParameter
+            ? `&aluno=${alunoParameter}`
+            : "";
 
-        const removeButton = document.createElement("button");
+        const editLink = document.createElement("a");
+
+        editLink.classList.add("edit-link");
+        editLink.textContent = "Editar";
+        editLink.href =
+            (
+                `./treino-exercicio-form.html?` +
+                `treino=${treinoId}` +
+                `&id=${treinoExercicio.id}` +
+                alunoSuffix
+            );
+
+        const removeButton =
+            document.createElement("button");
+
         removeButton.type = "button";
         removeButton.classList.add("delete-button");
         removeButton.textContent = "Remover";
-        removeButton.dataset.relacaoId =
-            String(treinoExercicio.id);
+
+        removeButton.addEventListener(
+            "click",
+            (): void => {
+                void deleteTreinoExercicio(
+                    treinoExercicio,
+                    treinoId,
+                    removeButton
+                );
+            }
+        );
 
         actions.append(
-            editButton,
+            editLink,
             removeButton
         );
 
@@ -189,7 +298,9 @@ function createExerciseCard(
 
 function showExercises(
     exercises: TreinoExercicio[],
-    isAdmin: boolean
+    isAdmin: boolean,
+    treinoId: number,
+    alunoParameter: string | null
 ): void {
     exerciciosList.replaceChildren();
 
@@ -209,7 +320,9 @@ function showExercises(
         exerciciosList.appendChild(
             createExerciseCard(
                 exercise,
-                isAdmin
+                isAdmin,
+                treinoId,
+                alunoParameter
             )
         );
     }
@@ -247,6 +360,7 @@ async function initializePage(): Promise<void> {
 
     const treinoParameter = searchParams.get("id");
     const treinoId = Number(treinoParameter);
+    const alunoParameter = searchParams.get("aluno");
 
     if (
         !treinoParameter ||
@@ -275,7 +389,10 @@ async function initializePage(): Promise<void> {
         }
 
         if (authenticatedUser.is_staff) {
-            showAddExerciseButton(treinoId);
+            showAddExerciseButton(
+                treinoId,
+                alunoParameter
+            );
         }
 
         const treino = await fetchAuthenticated<Treino>(
@@ -302,7 +419,9 @@ async function initializePage(): Promise<void> {
 
         showExercises(
             exercises,
-            authenticatedUser.is_staff
+            authenticatedUser.is_staff,
+            treinoId,
+            alunoParameter
         );
     } catch (error: unknown) {
         console.error(
@@ -326,18 +445,27 @@ async function initializePage(): Promise<void> {
 }
 
 function showAddExerciseButton(
-    treinoId: number
+    treinoId: number,
+    alunoParameter: string | null
 ): void {
     adminTopActions.replaceChildren();
 
-    const addButton = document.createElement("button");
+    const addLink = document.createElement("a");
 
-    addButton.type = "button";
-    addButton.classList.add("main-link-button");
-    addButton.textContent = "Adicionar exercício";
-    addButton.dataset.treinoId = String(treinoId);
+    addLink.classList.add("main-link-button");
+    addLink.textContent = "Adicionar exercício";
 
-    adminTopActions.appendChild(addButton);
+    const alunoSuffix = alunoParameter
+        ? `&aluno=${alunoParameter}`
+        : "";
+
+    addLink.href =
+        (
+            `./treino-exercicio-form.html?` +
+            `treino=${treinoId}${alunoSuffix}`
+        );
+
+    adminTopActions.appendChild(addLink);
     adminTopActions.classList.remove("hidden");
 }
 

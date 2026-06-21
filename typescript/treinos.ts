@@ -132,6 +132,87 @@ function createAlunoCard(aluno: Aluno): HTMLElement {
     return article;
 }
 
+async function deleteTreino(
+    treino: Treino,
+    alunoId: number,
+    deleteButton: HTMLButtonElement
+): Promise<void> {
+    const confirmed = window.confirm(
+        `Tem certeza de que deseja excluir o treino "${treino.nome}"?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    const accessToken = localStorage.getItem(
+        "access_token"
+    );
+
+    if (!accessToken) {
+        redirectToLogin();
+        return;
+    }
+
+    pageError.textContent = "";
+
+    deleteButton.disabled = true;
+    deleteButton.textContent = "Excluindo...";
+
+    try {
+        const response = await fetch(
+            `${backendAddress}api/treinos/${treino.id}/`,
+            {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }
+        );
+
+        if (response.status === 401) {
+            removeTokens();
+            redirectToLogin();
+            return;
+        }
+
+        if (response.status === 403) {
+            pageError.textContent =
+                "Você não possui permissão para excluir treinos.";
+
+            return;
+        }
+
+        if (response.status === 404) {
+            pageError.textContent =
+                "Treino não encontrado.";
+
+            return;
+        }
+
+        if (!response.ok) {
+            pageError.textContent =
+                "Não foi possível excluir o treino.";
+
+            return;
+        }
+
+        window.location.href =
+            `./treinos.html?aluno=${alunoId}`;
+    } catch (error: unknown) {
+        console.error(
+            "Erro ao excluir treino:",
+            error
+        );
+
+        pageError.textContent =
+            "Não foi possível conectar ao servidor.";
+    } finally {
+        deleteButton.disabled = false;
+        deleteButton.textContent = "Excluir";
+    }
+}
+
 function createTreinoCard(
     treino: Treino,
     alunoId?: number,
@@ -166,24 +247,36 @@ function createTreinoCard(
 
     article.appendChild(link);
 
-    if (isAdmin) {
+    if (isAdmin && alunoId !== undefined) {
         const actions = document.createElement("div");
         actions.classList.add("treino-actions");
 
-        const editButton = document.createElement("button");
-        editButton.type = "button";
-        editButton.classList.add("edit-link");
-        editButton.textContent = "Editar";
-        editButton.dataset.treinoId = String(treino.id);
+        const editLink = document.createElement("a");
+
+        editLink.classList.add("edit-link");
+        editLink.textContent = "Editar";
+        editLink.href =
+            `./treino-form.html?id=${treino.id}&aluno=${alunoId}`;
 
         const deleteButton = document.createElement("button");
+
         deleteButton.type = "button";
         deleteButton.classList.add("delete-button");
         deleteButton.textContent = "Excluir";
-        deleteButton.dataset.treinoId = String(treino.id);
+
+        deleteButton.addEventListener(
+            "click",
+            (): void => {
+                void deleteTreino(
+                    treino,
+                    alunoId,
+                    deleteButton
+                );
+            }
+        );
 
         actions.append(
-            editButton,
+            editLink,
             deleteButton
         );
 
@@ -416,14 +509,14 @@ function showCreateTreinoButton(
 ): void {
     adminTopActions.replaceChildren();
 
-    const createButton = document.createElement("button");
+    const createLink = document.createElement("a");
 
-    createButton.type = "button";
-    createButton.classList.add("main-link-button");
-    createButton.textContent = "Criar treino";
-    createButton.dataset.alunoId = String(alunoId);
+    createLink.classList.add("main-link-button");
+    createLink.textContent = "Criar treino";
+    createLink.href =
+        `./treino-form.html?aluno=${alunoId}`;
 
-    adminTopActions.appendChild(createButton);
+    adminTopActions.appendChild(createLink);
     adminTopActions.classList.remove("hidden");
 }
 

@@ -51,12 +51,67 @@ function createMetaBox(labelText, valueText) {
     box.append(label, value);
     return box;
 }
-function createExerciseCard(treinoExercicio, isAdmin) {
+async function deleteTreinoExercicio(relacao, treinoId, removeButton) {
+    const confirmed = window.confirm((`Tem certeza de que deseja remover ` +
+        `"${relacao.exercicio_nome}" deste treino?`));
+    if (!confirmed) {
+        return;
+    }
+    const accessToken = localStorage.getItem("access_token");
+    if (!accessToken) {
+        redirectToLogin();
+        return;
+    }
+    pageError.textContent = "";
+    removeButton.disabled = true;
+    removeButton.textContent = "Removendo...";
+    try {
+        const response = await fetch((`${backendAddress}api/treinos/${treinoId}/` +
+            `exercicios/${relacao.id}/`), {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+        if (response.status === 401) {
+            removeTokens();
+            redirectToLogin();
+            return;
+        }
+        if (response.status === 403) {
+            pageError.textContent =
+                "Você não possui permissão para remover exercícios.";
+            return;
+        }
+        if (response.status === 404) {
+            pageError.textContent =
+                "Exercício do treino não encontrado.";
+            return;
+        }
+        if (!response.ok) {
+            pageError.textContent =
+                "Não foi possível remover o exercício.";
+            return;
+        }
+        window.location.reload();
+    }
+    catch (error) {
+        console.error("Erro ao remover exercício do treino:", error);
+        pageError.textContent =
+            "Não foi possível conectar ao servidor.";
+    }
+    finally {
+        removeButton.disabled = false;
+        removeButton.textContent = "Remover";
+    }
+}
+function createExerciseCard(treinoExercicio, isAdmin, treinoId, alunoParameter) {
     const article = document.createElement("article");
     article.classList.add("treino-card");
     const title = document.createElement("h2");
     title.classList.add("card-title");
-    title.textContent = treinoExercicio.exercicio_nome;
+    title.textContent =
+        treinoExercicio.exercicio_nome;
     const meta = document.createElement("div");
     meta.classList.add("exercise-meta");
     meta.append(createMetaBox("Músculo", treinoExercicio.musculo_trabalhado), createMetaBox("Séries", String(treinoExercicio.qtd_series)), createMetaBox("Repetições", String(treinoExercicio.qtd_repeticoes)));
@@ -64,24 +119,30 @@ function createExerciseCard(treinoExercicio, isAdmin) {
     if (isAdmin) {
         const actions = document.createElement("div");
         actions.classList.add("treino-actions");
-        const editButton = document.createElement("button");
-        editButton.type = "button";
-        editButton.classList.add("edit-link");
-        editButton.textContent = "Editar";
-        editButton.dataset.relacaoId =
-            String(treinoExercicio.id);
+        const alunoSuffix = alunoParameter
+            ? `&aluno=${alunoParameter}`
+            : "";
+        const editLink = document.createElement("a");
+        editLink.classList.add("edit-link");
+        editLink.textContent = "Editar";
+        editLink.href =
+            (`./treino-exercicio-form.html?` +
+                `treino=${treinoId}` +
+                `&id=${treinoExercicio.id}` +
+                alunoSuffix);
         const removeButton = document.createElement("button");
         removeButton.type = "button";
         removeButton.classList.add("delete-button");
         removeButton.textContent = "Remover";
-        removeButton.dataset.relacaoId =
-            String(treinoExercicio.id);
-        actions.append(editButton, removeButton);
+        removeButton.addEventListener("click", () => {
+            void deleteTreinoExercicio(treinoExercicio, treinoId, removeButton);
+        });
+        actions.append(editLink, removeButton);
         article.appendChild(actions);
     }
     return article;
 }
-function showExercises(exercises, isAdmin) {
+function showExercises(exercises, isAdmin, treinoId, alunoParameter) {
     exerciciosList.replaceChildren();
     if (exercises.length === 0) {
         const emptyMessage = document.createElement("p");
@@ -92,7 +153,7 @@ function showExercises(exercises, isAdmin) {
         return;
     }
     for (const exercise of exercises) {
-        exerciciosList.appendChild(createExerciseCard(exercise, isAdmin));
+        exerciciosList.appendChild(createExerciseCard(exercise, isAdmin, treinoId, alunoParameter));
     }
 }
 function configureBackLink() {
@@ -114,6 +175,7 @@ async function initializePage() {
     const searchParams = new URLSearchParams(window.location.search);
     const treinoParameter = searchParams.get("id");
     const treinoId = Number(treinoParameter);
+    const alunoParameter = searchParams.get("aluno");
     if (!treinoParameter ||
         !Number.isInteger(treinoId) ||
         treinoId <= 0) {
@@ -129,7 +191,7 @@ async function initializePage() {
             return;
         }
         if (authenticatedUser.is_staff) {
-            showAddExerciseButton(treinoId);
+            showAddExerciseButton(treinoId, alunoParameter);
         }
         const treino = await fetchAuthenticated(`api/treinos/${treinoId}/`, accessToken);
         if (!treino) {
@@ -141,7 +203,7 @@ async function initializePage() {
         if (!exercises) {
             return;
         }
-        showExercises(exercises, authenticatedUser.is_staff);
+        showExercises(exercises, authenticatedUser.is_staff, treinoId, alunoParameter);
     }
     catch (error) {
         console.error("Erro ao carregar treino:", error);
@@ -159,14 +221,18 @@ async function initializePage() {
         loadingMessage.classList.add("hidden");
     }
 }
-function showAddExerciseButton(treinoId) {
+function showAddExerciseButton(treinoId, alunoParameter) {
     adminTopActions.replaceChildren();
-    const addButton = document.createElement("button");
-    addButton.type = "button";
-    addButton.classList.add("main-link-button");
-    addButton.textContent = "Adicionar exercício";
-    addButton.dataset.treinoId = String(treinoId);
-    adminTopActions.appendChild(addButton);
+    const addLink = document.createElement("a");
+    addLink.classList.add("main-link-button");
+    addLink.textContent = "Adicionar exercício";
+    const alunoSuffix = alunoParameter
+        ? `&aluno=${alunoParameter}`
+        : "";
+    addLink.href =
+        (`./treino-exercicio-form.html?` +
+            `treino=${treinoId}${alunoSuffix}`);
+    adminTopActions.appendChild(addLink);
     adminTopActions.classList.remove("hidden");
 }
 void initializePage();

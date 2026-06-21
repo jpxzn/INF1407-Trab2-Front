@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Treino | GymControl</title>
+
+    <link rel="stylesheet" href="./css/treinos.css">
+
+    <script
+        type="module"
+        src="./javascript/treino-form.js">
+    </script>
+</head>
+
+<body>
+    <iframe
+        src="./links.html"
+        width="100%"
+        height="72"
+        frameborder="0"
+        title="Menu de navegação"
+        class="header-frame">
+    </iframe>
+
+    <main class="form-page-container">
+        <a
+            id="back-link"
+            class="back-link"
+            href="./treinos.html">
+            ← Voltar para treinos
+        </a>
+
+        <section class="form-card">
+            <header class="page-header">
+                <h1 id="page-title" class="page-title">
+                    Criar treino
+                </h1>
+
+                <p id="page-subtitle" class="page-subtitle">
+                    Informe o nome do novo treino.
+                </p>
+            </header>
+
+            <p
+                id="form-error"
+                class="error-message"
+                role="alert">
+            </p>
+
+            <form id="treino-form" novalidate>
+                <div>
+                    <label for="nome">
+                        Nome do treino
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        maxlength="100"
+                        required
+                    >
+                </div>
+
+                <div class="form-actions">
+                    <button
+                        type="submit"
+                        id="save-button"
+                        class="save-button">
+                        Salvar
+                    </button>
+
+                    <a
+                        id="cancel-link"
+                        class="cancel-link"
+                        href="./treinos.html">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
