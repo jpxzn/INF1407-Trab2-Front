@@ -1,0 +1,136 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+.home-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+}
+
+.hero {
+    background: linear-gradient(135deg, #1e293b, #334155);
+    color: white;
+    border-radius: 20px;
+    padding: 60px 50px;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+}
+
+.hero-text h1 {
+    margin: 0 0 16px;
+    font-size: 42px;
+    font-weight: 700;
+}
+
+.hero-text p {
+    margin: 0;
+    max-width: 700px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: #e2e8f0;
+}
+
+.hero-buttons {
+    margin-top: 28px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.primary-btn,
+.secondary-btn {
+    text-decoration: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.primary-btn {
+    background: white;
+    color: #1e293b;
+}
+
+.primary-btn:hover {
+    background: #e2e8f0;
+}
+
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.cards-section {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.info-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+}
+
+.info-card h2 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 22px;
+    color: #0f172a;
+}
+
+.info-card p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #475569;
+    margin-bottom: 18px;
+}
+
+.info-card a {
+    text-decoration: none;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.info-card a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+    .cards-section {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        padding: 40px 28px;
+    }
+
+    .hero-text h1 {
+        font-size: 32px;
+    }
+}
+
+.header-frame {
+    display: block;
+    border: 0;
+}

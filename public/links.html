@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="./css/links.css">
+
+    <title>Cabeçalho</title>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="./index.html" target="_top" class="logo">
+                GymControl
+            </a>
+
+            <a href="./index.html" target="_top">
+                Home
+            </a>
+
+            <a href="./treinos.html" target="_top">
+                Treinos
+            </a>
+        </div>
+
+        <div class="nav-right" id="unlogged">
+            <a href="./login.html" target="_top" class="login-link">
+                Login
+            </a>
+
+            <a href="./cadastro.html" target="_top" class="signup-btn">
+                Criar conta
+            </a>
+        </div>
+
+        <div class="nav-right hidden" id="logged">
+            <span class="user" id="user-name">
+                Olá, usuário
+            </span>
+
+            <a href="#" class="logout-btn" id="logout">
+                Sair
+            </a>
+        </div>
+    </nav>
+
+    <script type="module" src="./javascript/links.js"></script>
+</body>
+</html>
