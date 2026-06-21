@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        rel="stylesheet"
+        href="./css/perfil.css"
+    >
+
+    <title>Meu perfil | GymControl</title>
+</head>
+
+<body>
+    <iframe
+        src="./links.html"
+        class="header-frame"
+        title="Cabeçalho"
+    ></iframe>
+
+    <main class="profile-page">
+        <section class="profile-card">
+            <div class="profile-header">
+                <div>
+                    <h1>Meu perfil</h1>
+
+                    <p>
+                        Consulte e atualize os dados da sua conta.
+                    </p>
+                </div>
+
+                <span
+                    class="user-type hidden"
+                    id="user-type"
+                ></span>
+            </div>
+
+            <div
+                class="loading-message"
+                id="loading-message"
+            >
+                Carregando perfil...
+            </div>
+
+            <form
+                class="hidden"
+                id="profile-form"
+            >
+                <div class="form-group">
+                    <label for="username">
+                        Nome de usuário
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        maxlength="150"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email">
+                        E-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div
+                    class="student-fields hidden"
+                    id="student-fields"
+                >
+                    <h2>Dados do aluno</h2>
+
+                    <div class="measurements-grid">
+                        <div class="form-group">
+                            <label for="weight">
+                                Peso
+                            </label>
+
+                            <div class="input-with-unit">
+                                <input
+                                    type="number"
+                                    id="weight"
+                                    name="weight"
+                                    min="1"
+                                    max="500"
+                                    step="0.01"
+                                    inputmode="decimal"
+                                >
+
+                                <span>kg</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="height">
+                                Altura
+                            </label>
+
+                            <div class="input-with-unit">
+                                <input
+                                    type="number"
+                                    id="height"
+                                    name="height"
+                                    min="0.50"
+                                    max="2.80"
+                                    step="0.01"
+                                    inputmode="decimal"
+                                >
+
+                                <span>m</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p
+                    class="form-message hidden"
+                    id="form-message"
+                ></p>
+
+                <div class="form-actions">
+                    <a
+                        href="./alterar-senha.html"
+                        class="password-link"
+                    >
+                        Alterar senha
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="save-button"
+                        id="save-button"
+                    >
+                        Salvar alterações
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script
+        type="module"
+        src="./javascript/perfil.js"
+    ></script>
+</body>
+</html>
