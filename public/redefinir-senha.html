@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Redefinir senha | GymControl</title>
+
+    <link
+        rel="stylesheet"
+        href="./css/registro.css"
+    >
+
+    <script
+        type="module"
+        src="./javascript/redefinir-senha.js"
+    ></script>
+</head>
+
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <h1>Redefinir senha</h1>
+
+            <p class="subtitle">
+                Informe o código recebido e escolha uma nova senha.
+            </p>
+
+            <form id="password-reset-confirm-form" novalidate>
+                <p
+                    id="password-reset-confirm-message"
+                    class="error"
+                    role="alert"
+                ></p>
+
+                <div class="form-group">
+                    <label for="code">
+                        Código de recuperação
+                    </label>
+
+                    <input
+                        type="text"
+                        id="code"
+                        name="code"
+                        autocomplete="one-time-code"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="new-password">
+                        Nova senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="new-password"
+                        name="new-password"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="new-password-confirmation">
+                        Confirmar nova senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="new-password-confirmation"
+                        name="new-password-confirmation"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+                </div>
+
+                <button
+                    type="submit"
+                    id="password-reset-confirm-button"
+                >
+                    Redefinir senha
+                </button>
+            </form>
+
+            <p class="login-link">
+                <a href="./esqueci-senha.html">
+                    Solicitar outro código
+                </a>
+            </p>
+
+            <p class="login-link">
+                <a href="./login.html">
+                    Voltar para o login
+                </a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

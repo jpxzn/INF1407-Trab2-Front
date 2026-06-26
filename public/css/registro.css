@@ -152,3 +152,12 @@ button:hover {
     width: 300px;
     text-align: center;
 }
+
+.success {
+    margin-bottom: 16px;
+
+    color: #15803d;
+
+    font-size: 14px;
+    text-align: center;
+}
